@@ -205,6 +205,19 @@ footer a:hover {
   border-color: #7D0A0A;
 }
 
+.ilerlemedurumu {
+  width: 640px;
+  height: 250px;
+  background: #EAD196;
+  color: black;
+  border-radius: 15px;
+  text-align: center;
+  padding-top: 20px;
+  margin-left: 790px;
+  position: absolute;
+  bottom: -130px;
+}
+
 .baslikaciklama {
   background-color: #EEEEEE;
   width: 275px;
