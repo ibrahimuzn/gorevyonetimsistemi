@@ -218,6 +218,34 @@ footer a:hover {
   bottom: -130px;
 }
 
+.progress-container {
+  margin: 20px auto;
+  width: 80%;
+  text-align: center;
+}
+
+.progress-bar {
+  height: 20px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #4CAF50;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+#tamamlanma-yuzdesi {
+  font-size: 1.2em;
+  color: #7D0A0A;
+  margin-bottom: 5px;
+}
+
 .baslikaciklama {
   background-color: #EEEEEE;
   width: 275px;

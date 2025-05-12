@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('gorevler', JSON.stringify(gorevler));
         gorevleriListele();
         formuTemizle();
+        guncelleTamamlanmaYuzdesi();
     });
 
     // Görevleri listeleme fonksiyonu
@@ -52,37 +53,37 @@ document.addEventListener('DOMContentLoaded', function () {
             if (gorev.tamamlandi) gorevElement.classList.add('gorev-tamamlandi');
 
             gorevElement.innerHTML = `
-                <input type="checkbox" ${gorev.tamamlandi ? 'checked' : ''}>
-                <div class="gorev-bilgi">
-                    <div class="gorev-baslik">${gorev.baslik}</div>
-                    <div>${gorev.aciklama}</div>
-                    <div class="gorev-tarih">${gorev.tarih}</div>
-                </div>
-                <button class="gorev-sil"><i class="fas fa-trash"></i></button>
-            `;
+            <input type="checkbox" ${gorev.tamamlandi ? 'checked' : ''}>
+            <div class="gorev-bilgi">
+                <div class="gorev-baslik">${gorev.baslik}</div>
+                <div>${gorev.aciklama}</div>
+                <div class="gorev-tarih">${gorev.tarih}</div>
+            </div>
+            <button class="gorev-sil"><i class="fas fa-trash"></i></button>
+        `;
 
-            // Checkbox
+            // Checkbox Event Listener
             const checkbox = gorevElement.querySelector('input[type="checkbox"]');
             checkbox.addEventListener('change', function () {
                 gorev.tamamlandi = this.checked;
                 localStorage.setItem('gorevler', JSON.stringify(gorevler));
                 gorevElement.classList.toggle('gorev-tamamlandi');
+                guncelleTamamlanmaYuzdesi(); // 🔥 Anlık güncelleme için eklendi
             });
 
-            // Sil butonu
+            // Sil Butonu Event Listener
             const silButon = gorevElement.querySelector('.gorev-sil');
             silButon.addEventListener('click', function () {
                 if (confirm('Bu görevi silmek istediğinize emin misiniz?')) {
                     gorevler = gorevler.filter(g => g.id !== gorev.id);
                     localStorage.setItem('gorevler', JSON.stringify(gorevler));
                     gorevleriListele();
+                    guncelleTamamlanmaYuzdesi(); // 🔥 Silme işleminde de güncelle
                 }
             });
 
             liste.appendChild(gorevElement);
         });
-        const gorevListesi = document.getElementById('gorev-listesi');
-        gorevListesi.scrollTop = gorevListesi.scrollHeight;
     }
 
     // Formu temizleme fonksiyonu
@@ -195,3 +196,20 @@ setInterval(() => {
         }
     });
 }, 60000);
+
+function guncelleTamamlanmaYuzdesi() {
+    const gorevler = JSON.parse(localStorage.getItem('gorevler')) || [];
+    const toplamGorev = gorevler.length;
+    const tamamlananGorev = gorevler.filter(gorev => gorev.tamamlandi).length;
+    const yuzde = toplamGorev > 0 ? (tamamlananGorev / toplamGorev * 100).toFixed(1) : 0;
+
+    document.getElementById('tamamlanma-yuzdesi').textContent =
+        `Görevlerinizin %${yuzde}'sini tamamladınız`;
+    document.getElementById('progress-fill').style.width = `${yuzde}%`;
+}
+
+// Sayfa yüklendiğinde ve her görev değiştiğinde çalıştır
+document.addEventListener('DOMContentLoaded', guncelleTamamlanmaYuzdesi);
+
+// Görev ekleme/silme/tamamlanma durumlarında yüzdeyi güncelle
+window.addEventListener('storage', guncelleTamamlanmaYuzdesi);
