@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+    <title>görev yönetim sistemi</title>
+</head>
+
+<body>
+
+    <div class="header">
+        <a href="index.html">
+            <h1>görev yönetim sistemim</h1>
+        </a>
+    </div>
+
+    <div class="gorevekle">
+        <h2>görev ekle</h2>
+        <h2 style="letter-spacing: 1px;">--------------------------</h2>
+
+        <input class="eklemebutonu" type="button" value="Ekle" id="gorev-ekle-btn">
+
+        <div class="baslikaciklama">
+            <h2 class="baslik">Başlık</h2>
+            <input type="text" style="font-family: 'Indie Flower', cursive;" id="gorev-baslik">
+
+            <h2 class="aciklama">Açıklama</h2>
+            <textarea id="gorev-aciklama" rows="4" placeholder="Görev detayını yaz..."></textarea>
+        </div>
+
+        <div class="sontarih">
+            <h2 class="baslik">Son Tarih</h2>
+            <input type="date" id="gorev-tarih">
+        </div>
+
+        <div class="oncelikbutonlari">
+            <h2 class="baslik">Aciliyet Seviyesi</h2>
+            <div class="butonlar">
+                <div class="priority-btn rutinbutonu" data-level="rutin"></div>
+                <div class="priority-btn ortabutonu" data-level="orta"></div>
+                <div class="priority-btn acilbutonu" data-level="acil"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="gorevlerim">
+        <h2>görev listesi</h2>
+        <div id="gorev-listesi" style="margin-top: 15px;"></div>
+    </div>
+
+    <div class="hatirlaticiler">
+        <h2>Hatırlatıcılar</h2>
+        <input type="text" id="hatirlatici-baslik" placeholder="Görev başlığı"
+            style="width: 120px; padding: 6px; border-radius:8px;">
+        <input type="datetime-local" id="hatirlatma-zamani">
+        <input class="hatirlaticiler-eklemebutonu" type="button" value="Ekle" id="hatirlatici-ekle-btn">
+        <div id="hatirlatici-listesi" style="margin-top: 20px;"></div>
+    </div>
+
+    <div class="ilerlemedurumu">
+        <h2>İlerleme Durumu</h2>
+        <div class="progress-container">
+            <p id="tamamlanma-yuzdesi">Görevlerinizin %0'sini tamamladınız</p>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <a href="https://instagram.com/ibrahimuzn0" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://discord.com/users/712989490456821802" target="_blank"><i class="fa-brands fa-discord"></i></a>
+        <a href="https://linkedin.com/in/ibrahim-emir-uzun-3a7054233/" target="_blank"><i
+                class="fa-brands fa-linkedin-in"></i></a>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>
