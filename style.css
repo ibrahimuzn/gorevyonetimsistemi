@@ -8,6 +8,7 @@ body {
   background-color: #FFF;
   height: 100%;
   font-family: "Indie Flower", cursive;
+  padding-bottom: 150px;
 }
 
 
@@ -18,7 +19,11 @@ body {
   color: #FFF;
   text-align: center;
   padding-top: 25px;
+}
 
+.header a:hover {
+  color: #E3B577;
+  transition: color 0.5s ease;
 }
 
 a {
@@ -48,29 +53,210 @@ footer a:hover {
   color: #E3B577;
 }
 
+.icerik-alani {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 20px;
+  max-width: 1355px;
+  margin: 0 auto;
+}
+
+.kutu {
+  width: 100%;
+}
+
 .gorevekle {
+  position: relative;
   background-color: #EAD196;
-  width: 640px;
-  height: 400px;
   border-radius: 15px;
-  margin-top: 45px;
-  margin-left: 90px;
   color: #FFF;
   text-align: center;
   padding: 20px;
 }
 
+.form-icerik {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+  text-align: left;
+  margin-top: 10px;
+}
+
+.form-sol,
+.form-sag {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.baslikaciklama,
+.sontarih,
+.oncelikbutonlari {
+  background-color: #EEEEEE;
+  border-radius: 15px;
+  padding: 15px;
+  color: black;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.baslikaciklama {
+  flex-grow: 1;
+  height: 100%;
+}
+
+/* 4. Input ve Textarea Ayarları */
+.baslikaciklama input[type="text"] {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #E3B577;
+  width: 80%;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-family: 'Indie Flower', cursive;
+  color: black;
+}
+
+.baslikaciklama textarea {
+  width: 90%;
+  height: 100px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-family: 'Indie Flower', cursive;
+  resize: none;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.sontarih input[type="date"] {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  width: 85%;
+  font-family: 'Indie Flower', cursive;
+}
+
+.baslik,
+.aciklama {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.butonlar {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.eklemebutonu {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  width: 80px;
+  height: 35px;
+  border-radius: 10px;
+  background-color: #4CAF50;
+  color: #FFF;
+  font-family: "Indie Flower", cursive;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.hatirlaticiler-eklemebutonu {
+  width: 80px;
+  height: 35px;
+  border-radius: 10px;
+  background-color: #4CAF50;
+  color: #FFF;
+  font-family: "Indie Flower", cursive;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+
+.eklemebutonu:hover {
+  transform: scale(1.1);
+  background-color: #45a049;
+}
+
+.rutinbutonu {
+  background-color: #4CAF50;
+}
+
+.ortabutonu {
+  background-color: #FFEB3B;
+}
+
+.acilbutonu {
+  background-color: #F44336;
+}
+
+@media (max-width: 768px) {
+  .form-icerik {
+    flex-direction: column;
+  }
+
+  .eklemebutonu {
+    position: static;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .baslikaciklama {
+    height: auto;
+    padding: 20px 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .icerik-alani {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-icerik {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  footer a {
+    margin: 0 15px;
+    font-size: 35px;
+  }
+
+  footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 0;
+  }
+}
+
 .gorevlerim {
   background-color: #EAD196;
-  width: 640px;
-  height: 400px;
   border-radius: 15px;
-  position: absolute;
-  right: 90px;
-  bottom: 150px;
-  /* KAYDIRMA ÇUBUĞU İÇİN KRİTİK AYARLAR: */
+  height: 440px;
   overflow-y: auto;
-  /* Dikey kaydırma çubuğunu aktif eder */
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -79,11 +265,8 @@ footer a:hover {
 
 #gorev-listesi {
   flex-grow: 1;
-  /* Tüm boş alanı kaplasın */
   overflow-y: auto;
-  /* İçerik taşarsa kaydırma çubuğu */
   padding-right: 10px;
-  /* Kaydırma çubuğu metinlere değmesin */
 }
 
 .gorev-item {
@@ -96,7 +279,6 @@ footer a:hover {
   position: relative;
   margin: 10px;
   width: calc(100% - 20px);
-  /* Genişlik ayarı */
 }
 
 .gorev-item.orta {
@@ -153,17 +335,13 @@ footer a:hover {
 }
 
 .hatirlaticiler {
-  width: 640px;
-  height: 250px;
   background: #EAD196;
   color: black;
-  margin-top: 30px;
-  margin-bottom: 250px;
   border-radius: 15px;
-  margin-left: 90px;
   text-align: center;
   padding-top: 20px;
   overflow-y: auto;
+  min-height: 300px;
 }
 
 #hatirlatma-zamani {
@@ -206,16 +384,12 @@ footer a:hover {
 }
 
 .ilerlemedurumu {
-  width: 640px;
-  height: 250px;
   background: #EAD196;
   color: black;
   border-radius: 15px;
   text-align: center;
   padding-top: 20px;
-  margin-left: 790px;
-  position: absolute;
-  bottom: -130px;
+  min-height: 300px;
 }
 
 .progress-container {
@@ -246,90 +420,18 @@ footer a:hover {
   margin-bottom: 5px;
 }
 
-.baslikaciklama {
-  background-color: #EEEEEE;
-  width: 275px;
-  height: 290px;
-  color: black;
-  border-radius: 15px;
-  margin: 10px;
-  text-align: center;
-  padding-top: 15px;
-}
 
-.baslik {
-  margin-bottom: 8px;
-}
 
-textarea {
-  width: 80%;
-  height: 160px;
-  padding: 10px;
-  border: 2px solid #ddd;
-  border-radius: 15px;
-  resize: vertical;
-  font-family: "Indie Flower", cursive;
-  /*sadece dikey boyutun değişmesi için*/
-}
 
-textarea:focus {
-  border-color: #E3B577;
-  /* tıklayınca altın rengi olması için*/
-  outline: none;
-  /* Mavi outline'ı kaldırıo*/
-}
 
-input[type="text"] {
-  border: none;
-  border-bottom: 2px solid #E3B577;
-  /* Sadece alt çizgi */
-  background: transparent;
-  transition: all 0.3s ease;
-  text-align: center;
-}
 
-input:focus {
-  transform: scale(1.02);
-  /* büyütme efekti */
-}
 
-.sontarih {
-  background-color: #EEEEEE;
-  width: 275px;
-  height: 135px;
-  margin-left: 315px;
-  margin-top: -298px;
-  border-radius: 15px;
-  color: black;
-  padding-top: 15px;
-}
 
-input[type="date"] {
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: white;
-  cursor: pointer;
-}
 
-.oncelikbutonlari {
-  background-color: #EEEEEE;
-  width: 275px;
-  height: 135px;
-  border-radius: 15px;
-  margin-left: 315px;
-  margin-top: 17px;
-  padding-top: 15px;
-  color: black;
-}
 
-.butonlar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
-  margin-top: 20px;
-}
+
+
+
 
 .priority-btn {
   width: 40px;
@@ -345,15 +447,12 @@ input[type="date"] {
   transform: scale(1.1);
 }
 
-/* SEÇİLİ BUTON STİLLERİ (Kesin Çalışır) */
 .priority-btn.selected {
   border: 3px solid #000;
-  /* Siyah border */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   transform: scale(1.15);
 }
 
-/* ✓ İşareti Ekleme */
 .priority-btn.selected::after {
   content: "✓";
   color: white;
@@ -363,44 +462,4 @@ input[type="date"] {
   left: 50%;
   transform: translate(-50%, -50%);
   text-shadow: 0 0 3px black;
-}
-
-.rutinbutonu {
-  background-color: #4CAF50;
-}
-
-.ortabutonu {
-  background-color: #FFEB3B;
-}
-
-.acilbutonu {
-  background-color: #F44336;
-}
-
-.eklemebutonu {
-  width: 70px;
-  height: 30px;
-  border-radius: 10px;
-  position: absolute;
-  right: 880px;
-  bottom: 490px;
-  background-color: #4CAF50;
-  color: #FFF;
-  font-family: "Indie Flower", cursive;
-  font-size: 14pt;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  /* Hafif aralık */
-}
-
-.hatirlaticiler-eklemebutonu {
-  width: 70px;
-  height: 30px;
-  border-radius: 10px;
-  background-color: #4CAF50;
-  color: #FFF;
-  font-family: "Indie Flower", cursive;
-  font-size: 14pt;
-  font-weight: 600;
-  letter-spacing: 0.5px;
 }

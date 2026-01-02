@@ -1,10 +1,9 @@
-// script.js
 document.addEventListener('DOMContentLoaded', function () {
-    // Değişkenler
+
     let seciliOncelik = null;
     let gorevler = JSON.parse(localStorage.getItem('gorevler')) || [];
 
-    // Öncelik butonları
+
     document.querySelectorAll('.priority-btn').forEach(button => {
         button.addEventListener('click', function () {
             document.querySelectorAll('.priority-btn').forEach(btn => {
@@ -15,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Görev ekleme butonu
+
     document.getElementById('gorev-ekle-btn').addEventListener('click', function () {
         const baslik = document.getElementById('gorev-baslik').value;
         const aciklama = document.getElementById('gorev-aciklama').value;
@@ -42,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
         guncelleTamamlanmaYuzdesi();
     });
 
-    // Görevleri listeleme fonksiyonu
+
     function gorevleriListele() {
         const liste = document.getElementById('gorev-listesi');
         liste.innerHTML = '';
@@ -62,23 +61,23 @@ document.addEventListener('DOMContentLoaded', function () {
             <button class="gorev-sil"><i class="fas fa-trash"></i></button>
         `;
 
-            // Checkbox Event Listener
+
             const checkbox = gorevElement.querySelector('input[type="checkbox"]');
             checkbox.addEventListener('change', function () {
                 gorev.tamamlandi = this.checked;
                 localStorage.setItem('gorevler', JSON.stringify(gorevler));
                 gorevElement.classList.toggle('gorev-tamamlandi');
-                guncelleTamamlanmaYuzdesi(); // 🔥 Anlık güncelleme için eklendi
+                guncelleTamamlanmaYuzdesi();
             });
 
-            // Sil Butonu Event Listener
+
             const silButon = gorevElement.querySelector('.gorev-sil');
             silButon.addEventListener('click', function () {
                 if (confirm('Bu görevi silmek istediğinize emin misiniz?')) {
                     gorevler = gorevler.filter(g => g.id !== gorev.id);
                     localStorage.setItem('gorevler', JSON.stringify(gorevler));
                     gorevleriListele();
-                    guncelleTamamlanmaYuzdesi(); // 🔥 Silme işleminde de güncelle
+                    guncelleTamamlanmaYuzdesi();
                 }
             });
 
@@ -86,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Formu temizleme fonksiyonu
+
     function formuTemizle() {
         document.getElementById('gorev-baslik').value = '';
         document.getElementById('gorev-aciklama').value = '';
@@ -97,36 +96,36 @@ document.addEventListener('DOMContentLoaded', function () {
         seciliOncelik = null;
     }
 
-    // Sayfa yüklendiğinde görevleri listele
+
     gorevleriListele();
 });
 
-// Hatırlatıcılar için dizi
+
 let hatirlaticilar = JSON.parse(localStorage.getItem('hatirlaticilar')) || [];
 
-// Ekle butonu eventi
+
 document.getElementById('hatirlatici-ekle-btn').addEventListener('click', () => {
-    const baslik = document.getElementById('hatirlatici-baslik').value; // EKLENDİ
+    const baslik = document.getElementById('hatirlatici-baslik').value;
     const zamanInput = document.getElementById('hatirlatma-zamani').value;
 
-    if (!baslik || !zamanInput) { // DEĞİŞTİ
+    if (!baslik || !zamanInput) {
         alert("Lütfen görev başlığı ve tarih seçin!");
         return;
     }
 
     const yeniHatirlatici = {
         id: Date.now(),
-        baslik: baslik, // EKLENDİ
+        baslik: baslik,
         zaman: zamanInput
     };
 
     hatirlaticilar.push(yeniHatirlatici);
     localStorage.setItem('hatirlaticilar', JSON.stringify(hatirlaticilar));
     hatirlaticilariListele();
-    zamanInput.value = ''; // Inputu temizle
+    zamanInput.value = '';
 });
 
-// Hatırlatıcıları listeleme fonksiyonu
+
 function hatirlaticilariListele() {
     const liste = document.getElementById('hatirlatici-listesi');
     liste.innerHTML = '';
@@ -135,7 +134,7 @@ function hatirlaticilariListele() {
         const item = document.createElement('div');
         item.className = 'hatirlatici-item';
 
-        // Tarih formatını düzenle
+
         const tarih = new Date(hatirlatici.zaman);
         const options = {
             weekday: 'long',
@@ -160,7 +159,7 @@ function hatirlaticilariListele() {
         liste.appendChild(item);
     });
 
-    // Sil butonlarına event ekleme
+
     document.querySelectorAll('.hatirlatici-sil').forEach(btn => {
         btn.addEventListener('click', function () {
             const id = parseInt(this.getAttribute('data-id'));
@@ -171,10 +170,10 @@ function hatirlaticilariListele() {
     });
 }
 
-// Sayfa yüklendiğinde listeyi yükle
+
 document.addEventListener('DOMContentLoaded', hatirlaticilariListele);
 
-// Hatırlatıcıları kontrol et (her dakika)
+
 setInterval(() => {
     const simdi = new Date();
     hatirlaticilar.forEach(hatirlatici => {
@@ -208,8 +207,7 @@ function guncelleTamamlanmaYuzdesi() {
     document.getElementById('progress-fill').style.width = `${yuzde}%`;
 }
 
-// Sayfa yüklendiğinde ve her görev değiştiğinde çalıştır
+
 document.addEventListener('DOMContentLoaded', guncelleTamamlanmaYuzdesi);
 
-// Görev ekleme/silme/tamamlanma durumlarında yüzdeyi güncelle
 window.addEventListener('storage', guncelleTamamlanmaYuzdesi);
