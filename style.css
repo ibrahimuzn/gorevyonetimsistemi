@@ -420,19 +420,6 @@ footer a:hover {
   margin-bottom: 5px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 .priority-btn {
   width: 40px;
   height: 40px;
@@ -462,4 +449,145 @@ footer a:hover {
   left: 50%;
   transform: translate(-50%, -50%);
   text-shadow: 0 0 3px black;
+}
+
+.sayfa-ortalayici {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.kayit-kutu {
+  background-color: #EAD196;
+  width: 100%;
+  max-width: 500px;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.kayit-kutu h1 {
+  color: #FFF;
+  margin-bottom: 15px;
+  font-size: 2.5rem;
+}
+
+.input-grubu {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-grubu label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.input-grubu input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-color: #FFF;
+  font-family: "Indie Flower", cursive;
+  font-size: 1.1rem;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.input-grubu input:focus {
+  outline: none;
+  border-color: #7D0A0A;
+  transform: scale(1.02);
+}
+
+.kayit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: "Indie Flower", cursive;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.kayit-btn:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+
+.alt-link {
+  margin-top: 20px;
+  font-size: 1.1rem;
+}
+
+.alt-link a {
+  color: #7D0A0A;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.alt-link a:hover {
+  color: #4CAF50;
+}
+
+
+#logout-btn {
+  position: absolute;
+  top: 35px;
+  right: 30px;
+  background-color: transparent;
+  border: 2px solid #E3B577;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 15px;
+  font-family: 'Indie Flower', cursive;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+#logout-btn:hover {
+  background-color: #E3B577;
+  color: #7D0A0A;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(227, 181, 119, 0.5);
+}
+
+@media (max-width: 600px) {
+  .header h1 {
+    font-size: 1.5rem;
+    margin-right: 70px;
+  }
+
+  #logout-btn {
+    top: 25px;
+    right: 10px;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .header h1 {
+    font-size: 1.5rem;
+    margin-right: 60px;
+  }
+
+  #logout-btn {
+    top: 20px !important;
+    right: 10px !important;
+    padding: 5px 10px !important;
+  }
 }

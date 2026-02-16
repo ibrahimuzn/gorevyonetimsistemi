@@ -1,213 +1,274 @@
+// --- AYARLAR ---
+// C# Projesini çalıştırdığında açılan adres (Bunu kendi portuna göre değiştir!)
+const API_URL = "https://localhost:7094";
+
+// --- GÜVENLİK VE TOKEN İŞLEMLERİ ---
+// Giriş yapılmış mı kontrol et (Token var mı?)
+const token = localStorage.getItem('accessToken');
+
+if (!token) {
+    window.location.href = "login.html";
+}
+
+// Çıkış Yapma Fonksiyonu (Header'daki butona bağlayabilirsin)
+function cikisYap() {
+    if (confirm("Çıkış yapmak istediğine emin misin aga?")) {
+        // Token'ı sil (Anahtarı çöpe at)
+        localStorage.removeItem('accessToken');
+
+        // Giriş sayfasına yönlendir
+        window.location.href = "login.html";
+    }
+}
+
+// Merkezi API İstek Fonksiyonu (Otomatik Token Ekler)
+async function authFetch(endpoint, options = {}) {
+    // Varsayılan header ayarları
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers // Varsa ekstra headerları ekle
+    };
+
+    // Eğer token varsa header'a ekle (Bearer Token)
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}${endpoint}`, {
+            ...options,
+            headers: headers
+        });
+
+        // Eğer 401 (Yetkisiz) hatası gelirse
+        if (response.status === 401) {
+            alert("Oturum süreniz dolmuş veya giriş yapmamışsınız.");
+            return null;
+        }
+
+        return response;
+    } catch (error) {
+        console.error("API Hatası:", error);
+        alert("Sunucuyla bağlantı kurulamadı! C# projesi çalışıyor mu?");
+        return null;
+    }
+}
+
+// --- DOM YÜKLENDİĞİNDE ÇALIŞACAKLAR ---
 document.addEventListener('DOMContentLoaded', function () {
-
     let seciliOncelik = null;
-    let gorevler = JSON.parse(localStorage.getItem('gorevler')) || [];
+    let gorevler = [];
 
-
+    // 1. ÖNCELİK BUTONLARI SEÇİMİ
     document.querySelectorAll('.priority-btn').forEach(button => {
         button.addEventListener('click', function () {
-            document.querySelectorAll('.priority-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
+            // Diğerlerinin seçimini kaldır
+            document.querySelectorAll('.priority-btn').forEach(btn => btn.classList.remove('selected'));
+            // Tıklananı seç
             this.classList.add('selected');
             seciliOncelik = this.dataset.level;
         });
     });
 
+    // 2. GÖREV EKLEME İŞLEMİ
+    const ekleBtn = document.getElementById('gorev-ekle-btn');
+    if (ekleBtn) {
+        ekleBtn.addEventListener('click', async function () {
+            const baslik = document.getElementById('gorev-baslik').value;
+            const aciklama = document.getElementById('gorev-aciklama').value;
+            const tarih = document.getElementById('gorev-tarih').value;
 
-    document.getElementById('gorev-ekle-btn').addEventListener('click', function () {
-        const baslik = document.getElementById('gorev-baslik').value;
-        const aciklama = document.getElementById('gorev-aciklama').value;
-        const tarih = document.getElementById('gorev-tarih').value;
+            if (!baslik || !seciliOncelik) {
+                alert('Lütfen bir başlık ve aciliyet seviyesi seçin!');
+                return;
+            }
 
-        if (!baslik || !seciliOncelik) {
-            alert('Lütfen başlık ve aciliyet seviyesi seçin!');
-            return;
-        }
+            const yeniGorev = {
+                baslik: baslik,
+                aciklama: aciklama,
+                tarih: tarih,
+                oncelik: seciliOncelik,
+                tamamlandi: false
+            };
 
-        const yeniGorev = {
-            id: Date.now(),
-            baslik,
-            aciklama,
-            tarih,
-            oncelik: seciliOncelik,
-            tamamlandi: false
-        };
+            // Backend'e gönder
+            const response = await authFetch('/api/gorevler', {
+                method: 'POST',
+                body: JSON.stringify(yeniGorev)
+            });
 
-        gorevler.push(yeniGorev);
-        localStorage.setItem('gorevler', JSON.stringify(gorevler));
-        gorevleriListele();
-        formuTemizle();
-        guncelleTamamlanmaYuzdesi();
-    });
+            if (response && response.ok) {
+                await listeyiYenile(); // Listeyi güncelle
+                formuTemizle(); // Kutuları boşalt
+            }
+        });
+    }
 
+    // 3. GÖREVLERİ LİSTELEME
+    async function listeyiYenile() {
+        const response = await authFetch('/api/gorevler');
+        if (!response) return; // Hata varsa dur
 
-    function gorevleriListele() {
+        gorevler = await response.json();
         const liste = document.getElementById('gorev-listesi');
         liste.innerHTML = '';
 
         gorevler.forEach(gorev => {
-            const gorevElement = document.createElement('div');
-            gorevElement.className = `gorev-item ${gorev.oncelik}`;
-            if (gorev.tamamlandi) gorevElement.classList.add('gorev-tamamlandi');
+            const div = document.createElement('div');
+            div.className = `gorev-item ${gorev.oncelik}`;
+            if (gorev.tamamlandi) div.classList.add('gorev-tamamlandi');
 
-            gorevElement.innerHTML = `
-            <input type="checkbox" ${gorev.tamamlandi ? 'checked' : ''}>
-            <div class="gorev-bilgi">
-                <div class="gorev-baslik">${gorev.baslik}</div>
-                <div>${gorev.aciklama}</div>
-                <div class="gorev-tarih">${gorev.tarih}</div>
-            </div>
-            <button class="gorev-sil"><i class="fas fa-trash"></i></button>
-        `;
+            div.innerHTML = `
+                <input type="checkbox" ${gorev.tamamlandi ? 'checked' : ''}>
+                <div class="gorev-bilgi">
+                    <div class="gorev-baslik">${gorev.baslik}</div>
+                    <div>${gorev.aciklama}</div>
+                    <div class="gorev-tarih">${gorev.tarih}</div>
+                </div>
+                <button class="gorev-sil" data-id="${gorev.id}"><i class="fas fa-trash"></i></button>
+            `;
 
-
-            const checkbox = gorevElement.querySelector('input[type="checkbox"]');
-            checkbox.addEventListener('change', function () {
+            // Checkbox (Tamamlandı/Devam)
+            const checkbox = div.querySelector('input[type="checkbox"]');
+            checkbox.addEventListener('change', async function () {
                 gorev.tamamlandi = this.checked;
-                localStorage.setItem('gorevler', JSON.stringify(gorevler));
-                gorevElement.classList.toggle('gorev-tamamlandi');
-                guncelleTamamlanmaYuzdesi();
+
+                // Backend'i güncelle
+                await authFetch(`/api/gorevler/${gorev.id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(gorev)
+                });
+
+                div.classList.toggle('gorev-tamamlandi');
+                yuzdeHesapla();
             });
 
-
-            const silButon = gorevElement.querySelector('.gorev-sil');
-            silButon.addEventListener('click', function () {
-                if (confirm('Bu görevi silmek istediğinize emin misiniz?')) {
-                    gorevler = gorevler.filter(g => g.id !== gorev.id);
-                    localStorage.setItem('gorevler', JSON.stringify(gorevler));
-                    gorevleriListele();
-                    guncelleTamamlanmaYuzdesi();
+            // Silme Butonu
+            const silBtn = div.querySelector('.gorev-sil');
+            silBtn.addEventListener('click', async function () {
+                if (confirm('Bu görevi silmek istediğine emin misin?')) {
+                    await authFetch(`/api/gorevler/${this.dataset.id}`, { method: 'DELETE' });
+                    listeyiYenile();
                 }
             });
 
-            liste.appendChild(gorevElement);
+            liste.appendChild(div);
         });
+        yuzdeHesapla();
     }
 
-
+    // Formu Temizle
     function formuTemizle() {
         document.getElementById('gorev-baslik').value = '';
         document.getElementById('gorev-aciklama').value = '';
         document.getElementById('gorev-tarih').value = '';
-        document.querySelectorAll('.priority-btn').forEach(btn => {
-            btn.classList.remove('selected');
-        });
+        document.querySelectorAll('.priority-btn').forEach(btn => btn.classList.remove('selected'));
         seciliOncelik = null;
     }
 
+    // Yüzde Hesapla
+    function yuzdeHesapla() {
+        const toplam = gorevler.length;
+        const biten = gorevler.filter(g => g.tamamlandi).length;
+        const yuzde = toplam > 0 ? (biten / toplam * 100).toFixed(1) : 0;
 
-    gorevleriListele();
-});
+        const yuzdeText = document.getElementById('tamamlanma-yuzdesi');
+        const progressBar = document.getElementById('progress-fill');
 
-
-let hatirlaticilar = JSON.parse(localStorage.getItem('hatirlaticilar')) || [];
-
-
-document.getElementById('hatirlatici-ekle-btn').addEventListener('click', () => {
-    const baslik = document.getElementById('hatirlatici-baslik').value;
-    const zamanInput = document.getElementById('hatirlatma-zamani').value;
-
-    if (!baslik || !zamanInput) {
-        alert("Lütfen görev başlığı ve tarih seçin!");
-        return;
+        if (yuzdeText) yuzdeText.innerText = `%${yuzde} Tamamlandı`;
+        if (progressBar) progressBar.style.width = `${yuzde}%`;
     }
 
-    const yeniHatirlatici = {
-        id: Date.now(),
-        baslik: baslik,
-        zaman: zamanInput
-    };
-
-    hatirlaticilar.push(yeniHatirlatici);
-    localStorage.setItem('hatirlaticilar', JSON.stringify(hatirlaticilar));
-    hatirlaticilariListele();
-    zamanInput.value = '';
+    // Başlangıçta listeyi çek
+    if (token) {
+        listeyiYenile();
+    }
 });
 
 
-function hatirlaticilariListele() {
+// --- HATIRLATICI İŞLEMLERİ (Global Scope) ---
+let hatirlaticilar = [];
+
+// Hatırlatıcı Ekleme
+const hatirlaticiEkleBtn = document.getElementById('hatirlatici-ekle-btn');
+if (hatirlaticiEkleBtn) {
+    hatirlaticiEkleBtn.addEventListener('click', async () => {
+        const baslik = document.getElementById('hatirlatici-baslik').value;
+        const zaman = document.getElementById('hatirlatma-zamani').value;
+
+        if (!baslik || !zaman) {
+            alert("Lütfen başlık ve zaman seçin!");
+            return;
+        }
+
+        const response = await authFetch('/api/hatirlaticilar', {
+            method: 'POST',
+            body: JSON.stringify({ baslik: baslik, zaman: zaman })
+        });
+
+        if (response && response.ok) {
+            hatirlaticiListele();
+            document.getElementById('hatirlatma-zamani').value = '';
+            document.getElementById('hatirlatici-baslik').value = '';
+        }
+    });
+}
+
+// Hatırlatıcıları Listeleme
+async function hatirlaticiListele() {
+    const response = await authFetch('/api/hatirlaticilar');
+    if (!response) return;
+
+    hatirlaticilar = await response.json();
     const liste = document.getElementById('hatirlatici-listesi');
     liste.innerHTML = '';
 
-    hatirlaticilar.forEach(hatirlatici => {
-        const item = document.createElement('div');
-        item.className = 'hatirlatici-item';
+    hatirlaticilar.forEach(h => {
+        const div = document.createElement('div');
+        div.className = 'hatirlatici-item';
 
-
-        const tarih = new Date(hatirlatici.zaman);
-        const options = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        };
-        const formatliTarih = tarih.toLocaleDateString('tr-TR', options);
-
-        item.innerHTML = `
-  <div style="flex-grow:1;">
-    <div style="font-weight:bold;">${hatirlatici.baslik}</div> <!-- Görev başlığı eklendi -->
-    <div>${formatliTarih}</div>
-  </div>
-  <button class="hatirlatici-sil" data-id="${hatirlatici.id}">
-    <i class="fas fa-trash"></i> Sil
-  </button>
-`;
-
-        liste.appendChild(item);
-    });
-
-
-    document.querySelectorAll('.hatirlatici-sil').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const id = parseInt(this.getAttribute('data-id'));
-            hatirlaticilar = hatirlaticilar.filter(h => h.id !== id);
-            localStorage.setItem('hatirlaticilar', JSON.stringify(hatirlaticilar));
-            hatirlaticilariListele();
+        // Tarihi güzel formatla
+        const tarihGosterim = new Date(h.zaman).toLocaleString('tr-TR', {
+            month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
         });
+
+        div.innerHTML = `
+            <div style="flex-grow:1;">
+                <b>${h.baslik}</b><br>
+                <span style="font-size:0.9em; color:#555;">${tarihGosterim}</span>
+            </div>
+            <button onclick="hatirlaticiSil(${h.id})" class="hatirlatici-sil">Sil</button>
+        `;
+        liste.appendChild(div);
     });
 }
 
-
-document.addEventListener('DOMContentLoaded', hatirlaticilariListele);
-
-
-setInterval(() => {
-    const simdi = new Date();
-    hatirlaticilar.forEach(hatirlatici => {
-        const hatirlatmaZamani = new Date(hatirlatici.zaman);
-
-        if (hatirlatmaZamani <= new Date(simdi.getTime() + 60000)) {
-            alert(`GÖREV ZAMANI!\n\n⌛ Tarih: ${hatirlatmaZamani.toLocaleDateString('tr-TR', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-            })}\n⏰ Saat: ${hatirlatmaZamani.toLocaleTimeString('tr-TR', {
-                hour: '2-digit',
-                minute: '2-digit'
-            })}\n\n"${hatirlatici.baslik}" görevi için zaman geldi!`); // DÜZELTİLDİ
-
-            hatirlaticilar = hatirlaticilar.filter(h => h.id !== hatirlatici.id);
-            localStorage.setItem('hatirlaticilar', JSON.stringify(hatirlaticilar));
-            hatirlaticilariListele();
-        }
-    });
-}, 60000);
-
-function guncelleTamamlanmaYuzdesi() {
-    const gorevler = JSON.parse(localStorage.getItem('gorevler')) || [];
-    const toplamGorev = gorevler.length;
-    const tamamlananGorev = gorevler.filter(gorev => gorev.tamamlandi).length;
-    const yuzde = toplamGorev > 0 ? (tamamlananGorev / toplamGorev * 100).toFixed(1) : 0;
-
-    document.getElementById('tamamlanma-yuzdesi').textContent =
-        `Görevlerinizin %${yuzde}'sini tamamladınız`;
-    document.getElementById('progress-fill').style.width = `${yuzde}%`;
+// Global Silme Fonksiyonu (HTML içinden onclick ile çağrıldığı için window'a atadık)
+window.hatirlaticiSil = async (id) => {
+    if (confirm("Hatırlatıcıyı silmek istiyor musun?")) {
+        await authFetch(`/api/hatirlaticilar/${id}`, { method: 'DELETE' });
+        hatirlaticiListele();
+    }
 }
 
+// Zaman Kontrolü (Her 30 saniyede bir çalışır)
+if (token) {
+    setInterval(() => {
+        const simdi = new Date();
+        hatirlaticilar.forEach(async h => {
+            const hedefZaman = new Date(h.zaman);
 
-document.addEventListener('DOMContentLoaded', guncelleTamamlanmaYuzdesi);
+            // Eğer zaman geldiyse (veya geçtiyse)
+            if (hedefZaman <= simdi) {
+                alert(`⏰ HATIRLATMA: "${h.baslik}" görevinin zamanı geldi!`);
 
-window.addEventListener('storage', guncelleTamamlanmaYuzdesi);
+                // Alarm çalınca veritabanından sil
+                await authFetch(`/api/hatirlaticilar/${h.id}`, { method: 'DELETE' });
+                hatirlaticiListele(); // Listeyi yenile
+            }
+        });
+    }, 30000);
+
+    // Sayfa açılınca hatırlatıcıları da yükle
+    document.addEventListener('DOMContentLoaded', hatirlaticiListele);
+}
