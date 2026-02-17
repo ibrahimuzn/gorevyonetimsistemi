@@ -1,28 +1,24 @@
-// C# Backend Adresi (Kendi portuna göre düzelt)
-const API_URL = "https://localhost:7094";
+// C# Backend Adresi
+const API_URL = "https://localhost:7158";
 
 document.getElementById('register-form').addEventListener('submit', async function (e) {
-    // 1. Sayfanın yenilenmesini engelle
     e.preventDefault();
 
-    // 2. Kutulardaki verileri al
-    // const ad = document.getElementById('kullanici-adi').value; // Identity standart olarak email kullanır
     const email = document.getElementById('email').value;
     const password = document.getElementById('sifre').value;
     const passwordConfirm = document.getElementById('sifre-tekrar').value;
 
-    // 3. Basit Kontroller
+    // --- ÖN KONTROLLER (Resmi Dil) ---
     if (password !== passwordConfirm) {
-        alert("Aga şifreler uyuşmuyor, bi kontrol et!");
+        alert("Hata: Girdiğiniz şifreler birbiriyle uyuşmuyor.");
         return;
     }
 
     if (password.length < 6) {
-        alert("Şifre en az 6 karakter olmalı kral.");
+        alert("Uyarı: Şifreniz en az 6 karakterden oluşmalıdır.");
         return;
     }
 
-    // 4. Backend'e İstek Gönder (/register endpoint'i)
     try {
         const response = await fetch(`${API_URL}/register`, {
             method: 'POST',
@@ -35,29 +31,52 @@ document.getElementById('register-form').addEventListener('submit', async functi
             })
         });
 
-        // 5. Sonucu Kontrol Et
         if (response.ok) {
-            alert("Kayıt başarılı aga! Giriş sayfasına yönlendiriliyorsun...");
-            window.location.href = "login.html"; // Başarılıysa girişe at
+            // --- BAŞARILI MESAJI (Resmi) ---
+            alert("Kayıt işlemi başarıyla tamamlandı. Giriş sayfasına yönlendiriliyorsunuz.");
+            window.location.href = "login.html";
         } else {
-            // Hata varsa detayını göstermeye çalışalım
+            // --- HATA MESAJLARI VE ÇEVİRİ ---
             const errorData = await response.json().catch(() => null);
-            console.error("Hata detayı:", errorData);
 
             if (errorData && errorData.errors) {
-                // Backend'den gelen hata mesajlarını birleştir
-                let mesaj = "Kayıt olunamadı:\n";
+                let mesaj = "Kayıt İşlemi Başarısız:\n";
+
+                // Gelen hataları döngüyle alıp Türkçeye çeviriyoruz
                 for (const key in errorData.errors) {
-                    mesaj += `- ${errorData.errors[key]}\n`;
+                    const gelenHata = errorData.errors[key][0]; // Backend'den gelen İngilizce hata
+                    let turkceHata = gelenHata; // Varsayılan olarak aynısını tut
+
+                    // Backend'den gelen standart İngilizce mesajları yakalayıp çevirelim
+                    if (gelenHata.includes("is already taken")) {
+                        turkceHata = "Bu e-posta adresi zaten sisteme kayıtlı.";
+                    }
+                    else if (gelenHata.includes("Passwords must be at least")) {
+                        turkceHata = "Şifreniz en az 6 karakter uzunluğunda olmalıdır.";
+                    }
+                    else if (gelenHata.includes("non alphanumeric")) {
+                        turkceHata = "Şifreniz en az bir sembol (!, *, ? vb.) içermelidir.";
+                    }
+                    else if (gelenHata.includes("digit")) {
+                        turkceHata = "Şifreniz en az bir rakam (0-9) içermelidir.";
+                    }
+                    else if (gelenHata.includes("uppercase")) {
+                        turkceHata = "Şifreniz en az bir büyük harf (A-Z) içermelidir.";
+                    }
+                    else if (gelenHata.includes("lowercase")) {
+                        turkceHata = "Şifreniz en az bir küçük harf (a-z) içermelidir.";
+                    }
+
+                    mesaj += `- ${turkceHata}\n`;
                 }
                 alert(mesaj);
             } else {
-                alert("Kayıt başarısız oldu. Bu mail adresi zaten kullanılıyor olabilir.");
+                alert("Beklenmedik bir hata oluştu. Lütfen bilgilerinizi kontrol ediniz.");
             }
         }
 
     } catch (error) {
         console.error("Bağlantı Hatası:", error);
-        alert("Sunucuya ulaşılamadı! C# projesi çalışıyor mu?");
+        alert("Sunucuya erişilemiyor. Lütfen internet bağlantınızı kontrol ediniz.");
     }
 });
