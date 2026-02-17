@@ -1,5 +1,4 @@
-// C# Backend Adresi
-const API_URL = "https://localhost:7158";
+const API_URL = "https://localhost:7094";
 
 document.getElementById('register-form').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -8,7 +7,6 @@ document.getElementById('register-form').addEventListener('submit', async functi
     const password = document.getElementById('sifre').value;
     const passwordConfirm = document.getElementById('sifre-tekrar').value;
 
-    // --- ÖN KONTROLLER (Resmi Dil) ---
     if (password !== passwordConfirm) {
         alert("Hata: Girdiğiniz şifreler birbiriyle uyuşmuyor.");
         return;
@@ -32,22 +30,18 @@ document.getElementById('register-form').addEventListener('submit', async functi
         });
 
         if (response.ok) {
-            // --- BAŞARILI MESAJI (Resmi) ---
             alert("Kayıt işlemi başarıyla tamamlandı. Giriş sayfasına yönlendiriliyorsunuz.");
             window.location.href = "login.html";
         } else {
-            // --- HATA MESAJLARI VE ÇEVİRİ ---
             const errorData = await response.json().catch(() => null);
 
             if (errorData && errorData.errors) {
                 let mesaj = "Kayıt İşlemi Başarısız:\n";
 
-                // Gelen hataları döngüyle alıp Türkçeye çeviriyoruz
                 for (const key in errorData.errors) {
-                    const gelenHata = errorData.errors[key][0]; // Backend'den gelen İngilizce hata
-                    let turkceHata = gelenHata; // Varsayılan olarak aynısını tut
+                    const gelenHata = errorData.errors[key][0];
+                    let turkceHata = gelenHata;
 
-                    // Backend'den gelen standart İngilizce mesajları yakalayıp çevirelim
                     if (gelenHata.includes("is already taken")) {
                         turkceHata = "Bu e-posta adresi zaten sisteme kayıtlı.";
                     }
