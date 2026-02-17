@@ -7,7 +7,7 @@ if (!token) {
 }
 
 function cikisYap() {
-    if (confirm("Çıkış yapmak istediğine emin misin aga?")) {
+    if (confirm("Çıkış yapmak istediğine emin misin?")) {
         localStorage.removeItem('accessToken');
         window.location.href = "login.html";
     }
@@ -37,7 +37,7 @@ async function authFetch(endpoint, options = {}) {
         return response;
     } catch (error) {
         console.error("API Hatası:", error);
-        alert("Sunucuyla bağlantı kurulamadı! C# projesi çalışıyor mu?");
+        alert("Sunucuyla bağlantı kurulamadı!");
         return null;
     }
 }
