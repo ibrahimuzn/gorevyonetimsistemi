@@ -29,6 +29,6 @@ document.getElementById('login-form').addEventListener('submit', async function 
 
     } catch (error) {
         console.error("Bağlantı Hatası:", error);
-        alert("Sunucuya ulaşılamadı! Backend çalışıyor mu?");
+        alert("Sunucuya ulaşılamadı!");
     }
 });
