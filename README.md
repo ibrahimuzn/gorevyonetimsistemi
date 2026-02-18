@@ -22,3 +22,8 @@ Bu projeyi bilgisayarınızda çalıştırmak için:
 1. **Projeyi İndirin:**
    ```bash
    git clone [https://github.com/ibrahimuzn/GorevYonetim-Frontend.git](https://github.com/KULLANICI_ADIN/GorevYonetim-Frontend.git)
+
+2. **Backend Codlarını İndirin**
+   ```bash
+   git clone [https://github.com/ibrahimuzn/GorevYonetim-Backend-API.git](https://github.com/ibrahimuzn/GorevYonetim-Backend-API.git)
+  
